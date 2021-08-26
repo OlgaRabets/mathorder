@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+          color: brown;
+          background-color: sandybrown;
+          font-style: italic;
+          font-size:20px;
+          text-align: center;
+        }
+        table {
+          transform: rotate(3deg);
+          margin: 30px;
+          padding: 20px 100px 20px 10px;
+          border-radius: 20px;
+          background-image: url(https://moipros.ru/wp-content/uploads/2017/08/sauna-ili-banya-sauna.jpg);
+          float: left;
+          width: 45%;
+          min-width: 350px;
+        }
+        tr.bold {
+          font-weight: bold;
+        }
+        ul {
+          transform: rotate(-3deg);
+          margin: 10px;
+          padding: 20px 10px;
+          list-style-type: none;
+          display: block;
+          float: left;
+          width: 45%;
+          min-width: 350px;
+        }
+        ul img {
+          width: 50%;
+          height: auto;
+          border-radius: 20px;
+        }
+        td>a {
+          text-decoration: none;
+        }
+        td>a:hover {
+          transform: scale(1.3);
+          display: block;
+        }
+        caption, p {
+          font-size: 40px;
+          margin: 10px;
+        }
+    </style>
+    <title>Список посетителей</title>
+</head>
+<body>
+
+    <ul>
+        <p>Прайс</p>
+        <img src="https://par-torg.com/wp-content/uploads/b/c/c/bccd3c77cdc95ee70fbab6f661d6320d.jpeg"/>
+        <li>1-ое посещение в месяце 10 руб</li>
+        <li>2-ое посещение в месяце 9 руб</li>
+        <li>3-ое посещение в месяце 8 руб</li>
+        <li>4-ое посещение в месяце 7 руб</li>
+        <li>5-ое посещение в месяце 6 руб</li>
+        <li>посещение для пенсионера 5 руб</li>
+    </ul>
+
+    <table>
+        <caption>Посетители</caption>
+        <tr class = 'bold'>
+            <td>Имя</td>
+            <td>Остаток</td>
+        </tr>
+        {%for key, value in id_and_name_and_rest_of_persons.items %}
+        <tr>
+            <td><a href = /show-person-visits/{{ key }}>{{ value.0 }}</a></td>
+            <td>{{ value.1 }}</td>
+        </tr>
+        {% endfor %}
+        <tr class = 'bold'>
+            <td>Итого</td>
+            <td>{{ person_rests_sum }}</td>
+        </tr>
+    </table>
+
+    <a href = '/create-person/Имя новой персоны/False'>Создать нового посетителя</a>
+</body>
+</html>
