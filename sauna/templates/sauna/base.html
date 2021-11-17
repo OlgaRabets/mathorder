@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'sauna/style.css' %}"/>
+    <style>
+        * {
+          font-size: {{ fontSize }}px;
+        }
+        table {
+          background-image: url({% static 'sauna/sauna-undressed.jpg' %});
+        }
+    </style>
+    <title>{{ title|default:"Старт" }}</title>
+</head>
+<body>
+    {% include "sauna/menu.html" %}
+
+    <p>Сауна в ФОЦе<br/>по пятницам<br/>с 20:15 до 22:00</p>
+
+    {% if user.is_authenticated %}
+        {{ user.username }}
+    {% else %}
+        Гость
+    {% endif %}
+    , добро пожаловать!
+    <br/>
+
+    {% block content %}
+        <img src="{% static 'sauna/sauna-undressed.jpg' %}"/>
+    {% endblock %}
+
+    <br/>
+    {% block links %}
+    {% endblock %}
+    <br/>
+
+    <div>Контакты: +375(29)1367750</div>
+</body>
+</html>

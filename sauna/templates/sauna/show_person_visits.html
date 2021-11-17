@@ -1,0 +1,24 @@
+{% extends 'sauna/base.html' %}
+{% block content %}
+    <table>
+        <caption>{{ current_person.name }}</caption>
+        <tr class = 'bold'>
+            <td>Дата</td>
+            <td>Приход</td>
+            <td>Расход</td>
+            <td>Остаток</td>
+        </tr>
+
+        {% for visit in visits %}
+        <tr>
+            <td>{{ visit.date|date:"d.m.Y" }}</td>
+            <td>{{ visit.fill }}</td>
+            <td>{{ visit.cost }}</td>
+            <td>{{ visit.rest }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+{% block links %}
+    <a href = '/create-visit/{{ current_person.pk }}'>Добавить посещение для {{ current_person.name }}</a>
+{% endblock %}

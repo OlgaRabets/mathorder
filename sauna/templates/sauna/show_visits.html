@@ -1,0 +1,20 @@
+{% extends 'sauna/base.html' %}
+{% block content %}
+    <table>
+        <caption>Посещения</caption>
+        <tr class = 'bold'>
+            <td>Дата</td>
+            <td>Количество человек</td>
+            <td>Приход</td>
+            <td>Расход</td>
+        </tr>
+        {%for item in visits_group_by_date %}
+        <tr>
+            <td>{{ item.date|date:"d.m.Y" }}</td>
+            <td>{{ item.date__count }}</td>
+            <td>{{ item.fill__sum }}</td>
+            <td>{{ item.cost }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

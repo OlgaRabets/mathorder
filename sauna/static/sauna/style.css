@@ -1,0 +1,40 @@
+        * {
+          color: brown;
+          background-color: sandybrown;
+          font-style: italic;
+          font-size: 20px;
+          text-align: center;
+        }
+        table {
+          transform: rotate(-3deg);
+          margin: auto;
+          padding: 20px 10px;
+          border-radius: 20px;
+        }
+        tr.bold {
+          font-weight: bold;
+        }
+        ul {
+          transform: rotate(-3deg);
+          list-style-type: none;
+          min-width: 350px;
+        }
+        ul img {
+          width: 50%;
+          height: auto;
+          border-radius: 20px;
+        }
+        td>a {
+          text-decoration: none;
+        }
+        td>a:hover {
+          transform: scale(1.3);
+          display: block;
+        }
+        caption, p {
+          font-size: 40px;
+          margin: 10px;
+        }
+        div {
+          bottom: 0px;
+        }

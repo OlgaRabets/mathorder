@@ -1,0 +1,23 @@
+{% extends 'sauna/base.html' %}
+{% block content %}
+    <table>
+        <caption>Посетители</caption>
+        <tr class = 'bold'>
+            <td>Имя</td>
+            <td>Остаток</td>
+        </tr>
+        {%for key, value in id_and_name_and_rest_of_persons.items %}
+        <tr>
+            <td><a href = /show-person-visits/{{ key }}>{{ value.0 }}</a></td>
+            <td>{{ value.1 }}</td>
+        </tr>
+        {% endfor %}
+        <tr class = 'bold'>
+            <td>Итого</td>
+            <td>{{ person_rests_sum }}</td>
+        </tr>
+    </table>
+{% endblock %}
+{% block links %}
+    <a href = '/create-person/Маша Сушкевич/True'>Создать нового посетителя</a>
+{% endblock %}

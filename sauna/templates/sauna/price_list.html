@@ -1,0 +1,17 @@
+{% extends 'sauna/base.html' %}
+{% load static %}
+{% block content %}
+    <ul>
+        <p>Прайс</p>
+        <img src="{% static 'sauna/sauna-dressed.jpeg' %}"/>
+        {% for object in object_list %}
+            <li>
+                {% if not object.privilege %}
+                    <br/>{{ object.number }}-ое посещение в месяце {{ object.cost }} руб
+                {% else %}
+                    (льготное {{ object.cost }} руб)
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

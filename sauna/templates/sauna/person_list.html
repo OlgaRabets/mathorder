@@ -1,0 +1,25 @@
+{% extends 'sauna/base.html' %}
+{% block content %}
+    <table>
+        <caption>{{ title }}</caption>
+        <tr class = 'bold'>
+            <td>Имя</td>
+            <td>Остаток</td>
+        </tr>
+        {%for object in object_list %}
+        <tr>
+            <td><a href = /show-person-visits/{{ object.id }}>{{ object.name }}</a></td>
+            <td>{{ object.get_rest_of_last_visit }}</td>
+        </tr>
+        {% endfor %}
+        <tr class = 'bold'>
+            <td>Итого</td>
+            <td>{{ person_rests_sum }}</td>
+        </tr>
+    </table>
+{% endblock %}
+{% block links %}
+    {% if user.is_superuser %}
+        <a href = '/create-person1'>Добавление нового посетителя</a>
+    {% endif %}
+{% endblock %}

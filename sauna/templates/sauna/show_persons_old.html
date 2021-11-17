@@ -82,6 +82,23 @@
         </tr>
     </table>
 
-    <a href = '/create-person/Имя новой персоны/False'>Создать нового посетителя</a>
+    <table>
+        <caption>Посещения</caption>
+        <tr class = 'bold'>
+            <td>Дата</td>
+            <td>Количество человек</td>
+            <td>Приход</td>
+            <td>Расход</td>
+        </tr>
+        {%for item in date_and_persons_number_and_fills_sum %}
+        <tr>
+            <td>{{ item.0 }}</td>
+            <td>{{ item.1 }}</td>
+            <td>{{ item.2 }}</td>
+            <td>{{ item.3 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href = '/create-person/Маша Сушкевич/True'>Создать нового посетителя</a>
 </body>
 </html>

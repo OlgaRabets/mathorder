@@ -1,0 +1,18 @@
+{% extends 'sauna/base.html' %}
+{% block content %}
+    <form action = "{% url 'login_user' %}"
+          method = "POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="color:red">
+            {{ err }}
+        </div>
+        <input type="radio"
+               name="user_has_login_and_password"
+               checked value="yes"/>У меня есть логин и пароль для этого сайта<br/>
+        <input type="radio"
+               name="user_has_login_and_password"
+               value="no"/>У меня нет логина и пароля, хочу создать<br/>
+        <input type="submit"/>
+    </form>
+{% endblock %}

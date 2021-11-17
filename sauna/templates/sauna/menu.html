@@ -1,0 +1,29 @@
+{% if request.get_full_path|length > 1 %}
+    <a href="{% url 'base' %}">Главная</a>
+{%endif%}
+
+{% if 'show-price' not in request.get_full_path %}
+    <a href="{% url 'show_price' %}">Прайс</a>
+{%endif%}
+
+{% if user.is_authenticated %}
+
+    {% if 'show-persons' not in request.get_full_path %}
+        <a href="{% url 'show_persons' %}">Посетители</a>
+    {%endif%}
+
+    {% if 'show-visits' not in request.get_full_path %}
+        <a href="{% url 'show_visits' %}">Посещения</a>
+    {%endif%}
+
+    <a href="{% url 'logout_user' %}">Выход</a>
+
+{% else %}
+
+    {% if 'login-user' not in request.get_full_path %}
+        <a href="{% url 'login_user' %}">Вход</a>
+    {% endif %}
+
+{% endif %}
+
+<a href="">Настройки</a>

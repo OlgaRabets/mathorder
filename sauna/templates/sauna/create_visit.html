@@ -1,0 +1,9 @@
+{% extends 'sauna/base.html' %}
+{% block content %}
+    <form action = "{% url 'create_visit' person %}"
+          method = "POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit"/>
+    </form>
+{% endblock %}
