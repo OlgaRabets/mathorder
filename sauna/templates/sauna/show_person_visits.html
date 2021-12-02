@@ -18,6 +18,17 @@
         </tr>
         {% endfor %}
     </table>
+    <div>
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}">&lt;</a>
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+        {% endif %}
+        Часть {{ page.number }} из {{ page.paginator.num_pages }}
+        {% if page.has_next %}
+            &nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="?page={{ page.next_page_number }}">&gt;</a>
+        {% endif %}
+    </div>
 {% endblock %}
 {% block links %}
     <a href = '/create-visit/{{ current_person.pk }}'>Добавить посещение для {{ current_person.name }}</a>

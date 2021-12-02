@@ -1,6 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
+from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.db.models import Sum, Count
@@ -166,7 +167,15 @@ class VisitByPersonListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_person'] = Person.objects.get(pk=self.kwargs['person'])
-        context['visits'] = Visit.objects.filter(person=self.kwargs['person']).order_by('-date')
+        visits = self.get_queryset()
+        paginator = Paginator(visits, 5)
+        if 'page' in self.request.GET:
+            page_num = self.request.GET['page']
+        else:
+            page_num = 1
+        page = paginator.get_page(page_num)
+        context['page'] = page
+        context['visits'] = page.object_list
         return context
 
 def show_person_visits(request: HttpRequest, person):
