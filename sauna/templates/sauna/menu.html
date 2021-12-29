@@ -1,9 +1,11 @@
+{% load i18n %}
+
 {% if request.get_full_path|length > 1 %}
-    <a href="{% url 'base' %}">Главная</a>
+    <a href="{% url 'base' %}">{% translate 'Главная' %}</a>
 {%endif%}
 
 {% if 'show-price' not in request.get_full_path %}
-    <a href="{% url 'show_price' %}">Прайс</a>
+    <a href="{% url 'show_price' %}">{% translate 'Прайс' %}</a>
 {%endif%}
 
 {% if user.is_authenticated %}
@@ -16,12 +18,12 @@
         <a href="{% url 'show_visits' %}">Посещения</a>
     {%endif%}
 
-    <a href="{% url 'logout_user' %}">Выход</a>
+    <a href="{% url 'logout' %}">Выход</a>
 
 {% else %}
 
-    {% if 'login-user' not in request.get_full_path %}
-        <a href="{% url 'login_user' %}">Вход</a>
+    {% if 'login' not in request.get_full_path %}
+        <a href="{% url 'login' %}">Вход</a>
     {% endif %}
 
 {% endif %}

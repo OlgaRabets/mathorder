@@ -2,6 +2,7 @@
 {% block content %}
     <table>
         <caption>{{ current_person.name }}</caption>
+        {{ user.person.id }}
         <tr class = 'bold'>
             <td>Дата</td>
             <td>Приход</td>
@@ -31,5 +32,7 @@
     </div>
 {% endblock %}
 {% block links %}
-    <a href = '/create-visit/{{ current_person.pk }}'>Добавить посещение для {{ current_person.name }}</a>
+    {% if user.is_superuser %}
+        <a href = '/create-visit/{{ current_person.pk }}'>Добавить посещение для {{ current_person.name }}</a>
+    {% endif %}
 {% endblock %}

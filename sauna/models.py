@@ -1,16 +1,27 @@
 from datetime import date
 from decimal import Decimal
+from logging import getLogger
+
+from django.contrib.auth import user_logged_in
+from django.contrib.auth.models import User
 from django.db import models
+# from django.db.models.signals import pre_save
+# from django.dispatch import receiver
+from django.dispatch import receiver
 
 
 class Person(models.Model):
     name = models.CharField(max_length=50, db_index=True, verbose_name='Имя')
     privilege = models.BooleanField(verbose_name='Льготный тариф')
+    user = models.OneToOneField(User, null=True, on_delete=models.PROTECT)
 
     class Meta:
         verbose_name_plural = 'Посетители'
         verbose_name = 'Посетителя'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
     def get_rest_of_last_visit(self):
         """
@@ -57,6 +68,13 @@ class Visit(models.Model):
         return price.cost
 
 
+#    @receiver(pre_save)
+#    def pre_save_visit(sender, **kwargs):
+#        visit = kwargs['instance']
+#        visit.cost = visit.get_cost_of_current_visit()
+#        visit.rest = visit.person.get_rest_of_last_visit() + visit.fill - visit.cost
+
+
 class Price(models.Model):
     privilege = models.BooleanField(verbose_name='Льготный тариф')
     number = models.IntegerField(verbose_name='Номер посещения в месяце')
@@ -66,3 +84,9 @@ class Price(models.Model):
         verbose_name_plural = 'Тарифы'
         verbose_name = 'Тариф'
         ordering = ['privilege', 'number']
+
+
+@receiver(user_logged_in)
+def write_logging(sender, **kwargs):
+    logger = getLogger(__name__)
+    logger.info('пользователь с логином %s успешно выполнил вход на сайт', kwargs['user'].username)

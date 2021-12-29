@@ -1,11 +1,14 @@
-from django.forms import ModelForm, Form, CharField, PasswordInput
+from django.forms import ModelForm, Form, CharField, PasswordInput, TextInput, DateInput
 from .models import Person, Visit
 
 
 class VisitForm(ModelForm):
     class Meta:
         model = Visit
-        exclude = []
+        exclude = ['cost', 'rest']
+#        widgets = {
+#            'cost': TextInput(attrs={'readonly': True})
+#        }
 
 
 class LoginUserForm(Form):

@@ -1,9 +1,12 @@
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Sum, Count
 from django.contrib import auth
 from django.views.generic import ListView, CreateView
@@ -14,12 +17,12 @@ from .forms import VisitForm, LoginUserForm
 
 def base(request: HttpRequest):
     request.session['fontSize'] = 40
-        #request.session.get('fontSize', 20)
+    # request.session.get('fontSize', 20)
     return render(request, "sauna/base.html", {'fontSize': request.session['fontSize']})
 
 
 class PriceListView(ListView):
-    #template_name = 'sauna/price_list.html'
+    # template_name = 'sauna/price_list.html'
     model = Price
     queryset = Price.objects.all().order_by('number', 'privilege')
 
@@ -30,7 +33,7 @@ class PriceListView(ListView):
 
 
 class PersonListView(ListView):
-    #template_name = 'sauna/person_list.html'
+    # template_name = 'sauna/person_list.html'
     model = Person
 
     def get_context_data(self, **kwargs):
@@ -158,7 +161,7 @@ def create_person(request: HttpRequest, name: str, privilege):
     return HttpResponse('Yes!')
 
 
-class VisitByPersonListView(ListView):
+class VisitByPersonListView(LoginRequiredMixin, ListView):
     template_name = 'sauna/show_person_visits.html'
 
     def get_queryset(self):
@@ -177,6 +180,7 @@ class VisitByPersonListView(ListView):
         context['page'] = page
         context['visits'] = page.object_list
         return context
+
 
 def show_person_visits(request: HttpRequest, person):
     current_person = Person.objects.get(pk=person)
@@ -205,22 +209,40 @@ def create_visit_old(request: HttpRequest, person: int, date_of_visit: date, fil
     return HttpResponse(cost)
 
 
+def date_last_friday():
+    # номер сегодняшнего дня недели
+    day_of_week_today = date.today().weekday()
+    # сколько дней дазад была пятница
+    if day_of_week_today < 4:
+        days_ago = day_of_week_today + 3
+    else:
+        days_ago = day_of_week_today - 4
+    # дата последней пятницы
+    return date.today() - timedelta(days=days_ago)
+
+
 class VisitCreateView(CreateView):
     template_name = 'sauna/create_visit.html'
     form_class = VisitForm
-    #success_url = 'show-persons/{pk}'
+
+    # success_url = 'show-persons/{pk}'
 
     def get(self, request, person):
         p = Person.objects.get(pk=person)
-        form = VisitForm(initial={'date': date.today(),
+        form = VisitForm(initial={'date': date_last_friday(),
+                                  'fill': Decimal('0.00'),
                                   'person': p})
         return render(request, 'sauna/create_visit.html', {'form': form, 'person': person})
 
     def post(self, request, person):
         form = VisitForm(request.POST)
         if form.is_valid():
+            # form.instance.person = Person.objects.get(pk=person)
+            form.instance.cost = form.instance.get_cost_of_current_visit()
+            form.instance.rest = form.instance.person.get_rest_of_last_visit() + form.instance.fill - form.instance.cost
             form.save()
-            return show_person_visits(request, person)
+            # return show_person_visits(request, person)
+            return redirect('show_person_visits', person=person)
         return render(request, 'sauna/create_visit.html', {'form': form, 'person': person})
 
 
@@ -237,31 +259,39 @@ def create_visit(request: HttpRequest, person: int):
     return render(request, 'sauna/create_visit.html', {'form': form, 'person': person})
 
 
-def logout_user(request: HttpRequest):
-    if request.user.is_authenticated:
-        auth.logout(request)
-    return render(request, "sauna/base.html", {})
+# def logout_user(request: HttpRequest):
+#    if request.user.is_authenticated:
+#        auth.logout(request)
+#    return render(request, "sauna/base.html", {})
 
+# @ login_required()
+# def login_user(request: HttpRequest):
+#    err = ''
+#    if request.method == 'GET':
+#        form = LoginUserForm()
+#    elif request.method == 'POST':
+#        form = LoginUserForm(request.POST)
+#        if form.is_valid():
+#            user = auth.authenticate(request, **form.cleaned_data)
+#            if user is not None:
+#                auth.login(request, user)
+#                return render(request, "sauna/base.html", {})
+#            elif request.POST['user_has_login_and_password'] == 'no':
+#                if auth.models.User.objects.filter(username=request.POST['username']).exists():
+#                    err = "Пользователь с таким именем уже существует. Выберите другое имя."
+#                    return render(request, "sauna/login_user.html", {'form': form, 'err': err})
+#                user == auth.models.User.objects.create_user(request.POST['username'],
+#                                                             password=request.POST['password'])
+#                auth.login(request, user)
+#                return render(request, "sauna/base.html", {})
+#            else:
+#                from django.utils.translation import gettext
+#                err = gettext("Ошибка при вводе логина или пароля!")
+#    return render(request, "sauna/login_user.html", {'form': form, 'err': err})
 
-def login_user(request: HttpRequest):
-    err = ''
-    if request.method == 'GET':
-        form = LoginUserForm()
-    elif request.method == 'POST':
-        form = LoginUserForm(request.POST)
-        if form.is_valid():
-            user = auth.authenticate(request, **form.cleaned_data)
-            if user is not None:
-                auth.login(request, user)
-                return render(request, "sauna/base.html", {})
-            elif request.POST['user_has_login_and_password'] == 'no':
-                if auth.models.User.objects.filter(username=request.POST['username']).exists():
-                    err = "Пользователь с таким именем уже существует. Выберите другое имя."
-                    return render(request, "sauna/login_user.html", {'form': form, 'err': err})
-                user == auth.models.User.objects.create_user(request.POST['username'],
-                                                             password=request.POST['password'])
-                auth.login(request, user)
-                return render(request, "sauna/base.html", {})
-            else:
-                err = "Ошибка при вводе логина или пароля!"
-    return render(request, "sauna/login_user.html", {'form': form, 'err': err})
+class SaunaLoginView(LoginView):
+    template_name = 'registration/login.html'
+
+    def get_success_url(self):
+        return '/show-person-visits/'+str(self.request.user.person.id)+'/'
+
