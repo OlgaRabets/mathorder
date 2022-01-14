@@ -1,0 +1,9 @@
+{% extends 'sauna/base.html' %}
+{% block content %}
+<h2>Выход</h2>
+{% if not user.is_authenticated %}
+    <p>Вы уже выполнили выход.</p>
+{% else %}
+    <p>Благодарим за время, проведенное на этом сайте.</p>
+{% endif %}
+{% endblock %}
