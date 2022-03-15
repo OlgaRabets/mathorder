@@ -14,8 +14,10 @@
         <a href="{% url 'show_persons' %}">Посетители</a>
     {%endif%}
 
+    {% if user.is_superuser %}
     {% if 'show-visits' not in request.get_full_path %}
         <a href="{% url 'show_visits' %}">Посещения</a>
+    {%endif%}
     {%endif%}
 
     <a href="{% url 'logout' %}">Выход</a>
@@ -28,4 +30,6 @@
 
 {% endif %}
 
-<a href="">Настройки</a>
+{% if user.is_superuser %}
+    <a href="">Настройки</a>
+{% endif %}

@@ -8,7 +8,13 @@
         </tr>
         {%for object in object_list %}
         <tr>
-            <td><a href = /show-person-visits/{{ object.id }}>{{ object.name }}</a></td>
+            <td>
+                {% if user.is_superuser %}
+                    <a href = /show-person-visits/{{ object.id }}>{{ object.name }}</a>
+                {% else %}
+                    {{ object.name }}
+                {% endif %}
+            </td>
             <td>{{ object.get_rest_of_last_visit }}</td>
         </tr>
         {% endfor %}

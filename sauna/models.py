@@ -76,14 +76,24 @@ class Visit(models.Model):
 
 
 class Price(models.Model):
-    privilege = models.BooleanField(verbose_name='Льготный тариф')
+    privilege = models.BooleanField(verbose_name='Льгота')
     number = models.IntegerField(verbose_name='Номер посещения в месяце')
     cost = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Стоимость')
 
     class Meta:
-        verbose_name_plural = 'Тарифы'
-        verbose_name = 'Тариф'
+        verbose_name_plural = 'Цены'
+        verbose_name = 'Цена'
         ordering = ['privilege', 'number']
+
+
+class Payment(models.Model):
+    date = models.DateField(verbose_name='Дата')
+    cost = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Стоимость')
+
+    class Meta:
+        verbose_name_plural = 'Платежи'
+        verbose_name = 'Платеж'
+        ordering = ['-date']
 
 
 @receiver(user_logged_in)

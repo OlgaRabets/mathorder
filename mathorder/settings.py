@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'sauna',
     'todo',
     'blog',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

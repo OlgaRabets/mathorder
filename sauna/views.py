@@ -11,7 +11,7 @@ from django.db.models import Sum, Count
 from django.contrib import auth
 from django.views.generic import ListView, CreateView
 
-from .models import Person, Visit, Price
+from .models import Person, Visit, Price, Payment
 from .forms import VisitForm, LoginUserForm
 
 
@@ -89,10 +89,36 @@ def show_visits(request: HttpRequest):
     :param request:
     :return:
     """
+    person_rests = Decimal('0.00')  # сумма персональных остатков
+    for person in Person.objects.all():
+        person_rests += person.get_rest_of_last_visit()
+
+    current_date = Visit.objects.order_by('-date').first().date  # дата последнего посещения сауны
+
+    used_payments = Decimal('0.00')  # использованные оплаты посещений сауны
+    for payment in Payment.objects.all():
+        if payment.date <= current_date:
+            used_payments += payment.cost
+
+    unused_payments = Decimal('0.00')  # неиспользованные оплаты посещений сауны
+    for payment in Payment.objects.all():
+        if payment.date > current_date:
+            unused_payments += payment.cost
+
+    person_costs = Decimal('0.00')  # сумма, заплаченная посетителями за посещения сауны
+    for visit in Visit.objects.all():
+        person_costs += visit.cost
+
+    unperson_rests = person_costs - used_payments  # общие остатки
+    cash = person_rests + unperson_rests - unused_payments  # наличные у меня
+
     visits_group_by_date = Visit.objects.values('date') \
         .annotate(Count('date'), Sum('fill'), cost=Sum('cost')) \
         .order_by('-date')
-    context = {'visits_group_by_date': visits_group_by_date}
+    context = {'visits_group_by_date': visits_group_by_date,
+               'person_rests': person_rests, 'person_costs': person_costs,
+               'used_payments': used_payments, 'unused_payments': unused_payments,
+               'unperson_rests': unperson_rests, 'cash': cash}
     return render(request, 'sauna/show_visits.html', context)
 
     date_and_persons_number_and_fills_sum = []
